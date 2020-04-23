@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+    This plugin integrates <a href="https://devexpress.github.io/testcafe/">Testcafe</a> with Jenkins
+</div>
