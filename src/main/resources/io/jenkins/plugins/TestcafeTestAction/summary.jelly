@@ -1,19 +1,26 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-<h3>Screenshots and videos</h3>
-<tr><td>
-    <table class="pane sortable">
-        <tr>
-            <td class="pane-header">${%Files}</td>
-        </tr>
-            <j:forEach var="attachment" items="${it.getAttachments()}">
+<j:choose>
+    <j:when test="${it.getAttachments().size() == 0}">
+      <h3>No attachments</h3>
+    </j:when>
+    <j:otherwise>
+        <h3>Screenshots and videos</h3>
+        <tr><td>
+            <table class="pane sortable">
                 <tr>
-                    <td class="pane">
-                        <a href="${it.getUrl(attachment)}">${attachment}</a>
-                    </td>
+                    <td class="pane-header">${%Files}</td>
                 </tr>
-            </j:forEach>
-    </table>
-</td></tr>
+                    <j:forEach var="attachment" items="${it.getAttachments()}">
+                        <tr>
+                            <td class="pane">
+                                <a href="${it.getUrl(attachment)}">${attachment}</a>
+                            </td>
+                        </tr>
+                    </j:forEach>
+            </table>
+        </td></tr>
+    </j:otherwise>
+</j:choose>
 </j:jelly>
