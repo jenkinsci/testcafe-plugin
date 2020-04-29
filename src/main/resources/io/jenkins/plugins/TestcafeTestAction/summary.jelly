@@ -15,7 +15,7 @@
                     <j:forEach var="attachment" items="${it.getAttachments()}">
                         <tr>
                             <td class="pane">
-                                <a href="${it.getUrl(attachment)}">${attachment}</a>
+                                <a href="${it.getUrl(attachment.value)}">${attachment.key}</a>
                             </td>
                         </tr>
                     </j:forEach>

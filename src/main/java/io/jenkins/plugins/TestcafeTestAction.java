@@ -1,49 +1,41 @@
 package io.jenkins.plugins;
 
+import hudson.Util;
 import hudson.tasks.junit.TestAction;
 import hudson.tasks.test.TestObject;
-import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import jenkins.model.Jenkins;
 
 /**
  * Represents page with information about the test
- * 
+ *
  */
 public class TestcafeTestAction extends TestAction {
 
     private static final Logger LOG = Logger.getLogger(TestAction.class.getName());
 
     private final TestObject testObject;
-    
-    /*
-    * List of attachment paths with root in artifacts dir
-    *
-    * E.g.: 
-    *   screenshots/2020-04-22_16-42-12/test-1/Firefox_75.0_Linux_0.0/errors/1.png
-    *   videos/2020-04-22_16-42-12/test-1/Firefox_75.0_Linux_0.0/1.mp4
-    */
-    private final List<String> attachmentNames;
 
-    public List<String> getAttachments() {
-        return attachmentNames;
+    private final Map<String, String> testAttachments;
+
+    public Map<String, String> getAttachments() {
+        return testAttachments;
     }
 
-    public TestcafeTestAction(TestObject testObject, List<String> attachmentNames) {
+    public TestcafeTestAction(TestObject testObject, Map<String, String> testAttachments) {
         this.testObject = testObject;
-        this.attachmentNames = attachmentNames;
+        this.testAttachments = testAttachments;
     }
 
     @Override
     public String getUrlName() {
-        // Returning absolute path to archived artifacts
-        // (because can not avoid usage of methods from jenkins Action)
-        return Jenkins.get().getRootUrl() + testObject.getRun().getUrl() + "artifact/";
+        return null;
     }
 
     @Override
     public String getDisplayName() {
-        return "Artifacts";
+        return null;
     }
 
     @Override
@@ -51,14 +43,11 @@ public class TestcafeTestAction extends TestAction {
         return "package.gif";
     }
 
-    /**
-     * Transformation from relative to absolute path artifact
-     * 
-     * @param fileName with root in artifacts dir
-     * @return 
-     */
     public String getUrl(String fileName) {
-        return Jenkins.get().getRootUrl() + testObject.getRun().getUrl() + "artifact/" + fileName;
+        return Jenkins.get().getRootUrl()
+                + testObject.getRun().getUrl()
+                + "testcafe-attachments/"
+                + Util.rawEncode(fileName);
     }
 
     public TestObject getTestObject() {

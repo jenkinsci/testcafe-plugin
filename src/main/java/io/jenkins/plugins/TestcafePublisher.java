@@ -11,13 +11,11 @@ import hudson.tasks.junit.TestResultAction;
 import hudson.tasks.junit.TestResult;
 import hudson.tasks.junit.CaseResult;
 import hudson.tasks.junit.SuiteResult;
+import java.io.File;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import jenkins.model.ArtifactManager;
-import jenkins.util.BuildListenerAdapter;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class TestcafePublisher extends TestDataPublisher {
@@ -30,26 +28,34 @@ public class TestcafePublisher extends TestDataPublisher {
     public TestResultAction.Data contributeTestData(Run<?, ?> run, FilePath workspace,
             Launcher launcher, TaskListener listener,
             TestResult testResult) throws IOException, InterruptedException {
+        FilePath attachmentsStorage = new FilePath(new File(run.getRootDir().getAbsolutePath()))
+                .child("testcafe-attachments");
 
-        final ArtifactManager artifactManager = run.pickArtifactManager();
+        attachmentsStorage.mkdirs();
 
-        Map<String, String> mapFromArchiveToWorkspace = new HashMap<>();
+        run.addAction(new TestcafeAttachmentsAction(run));
 
         for (SuiteResult suiteResult : testResult.getSuites()) {
             List<CaseResult> caseResults = suiteResult.getCases();
 
             for (CaseResult caseResult : caseResults) {
-                List<String> attachments = (new AttachmentsParser(caseResult, workspace)).parse();
+                Map<String, String> attachments = (new AttachmentsParser(caseResult)).parse();
 
-                attachments.forEach(attachment -> {
-                    mapFromArchiveToWorkspace.put(attachment, attachment);
-                });
+                for (Map.Entry<String, String> entry : attachments.entrySet()) {
+                    final String attachmentAbsolutePath = entry.getKey();
+                    final String attachmentNewFilename = entry.getValue();
+
+                    // even though we use child(), this should be absolute
+                    FilePath from = workspace.child(attachmentAbsolutePath);
+
+                    FilePath dst = new FilePath(attachmentsStorage, attachmentNewFilename);
+
+                    from.copyTo(dst);
+                }
             }
         }
 
-        artifactManager.archive(workspace, launcher, new BuildListenerAdapter(listener), mapFromArchiveToWorkspace);
-
-        return new TestData(workspace);
+        return new TestData();
     }
 
     @Extension
