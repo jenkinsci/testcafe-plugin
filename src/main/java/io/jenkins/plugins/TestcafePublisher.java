@@ -20,6 +20,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 public class TestcafePublisher extends TestDataPublisher {
 
+    private static TestResultAction.Data testData = null;
+
     @DataBoundConstructor
     public TestcafePublisher() {
     }
@@ -55,7 +57,12 @@ public class TestcafePublisher extends TestDataPublisher {
             }
         }
 
-        return new TestData();
+        if (testData == null) {
+            testData = new TestData();
+            return testData;
+        }
+
+        return null;
     }
 
     @Extension
