@@ -14,13 +14,13 @@ import hudson.tasks.junit.SuiteResult;
 import java.io.File;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class TestcafePublisher extends TestDataPublisher {
-
-    private static TestResultAction.Data testData = null;
 
     @DataBoundConstructor
     public TestcafePublisher() {
@@ -37,7 +37,11 @@ public class TestcafePublisher extends TestDataPublisher {
 
         run.addAction(new TestcafeAttachmentsAction(run));
 
+        final Set<String> suiteIDs = new HashSet<>();
+
         for (SuiteResult suiteResult : testResult.getSuites()) {
+            suiteIDs.add(suiteResult.getId());
+
             List<CaseResult> caseResults = suiteResult.getCases();
 
             for (CaseResult caseResult : caseResults) {
@@ -57,12 +61,7 @@ public class TestcafePublisher extends TestDataPublisher {
             }
         }
 
-        if (testData == null) {
-            testData = new TestData();
-            return testData;
-        }
-
-        return null;
+        return new TestData(suiteIDs);
     }
 
     @Extension
