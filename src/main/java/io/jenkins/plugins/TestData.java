@@ -7,7 +7,6 @@ import hudson.tasks.junit.TestResultAction;
 import hudson.tasks.test.TestObject;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -32,7 +31,7 @@ public class TestData extends TestResultAction.Data {
                 return Collections.emptyList();
             }
 
-            final Map<String, String> testAttachments = (new AttachmentsParser(caseResult)).parse();
+            final List<Attachment> testAttachments = (new AttachmentsParser(caseResult)).parse();
             TestAction action = new TestcafeTestAction((TestObject) testObject, testAttachments);
 
             return Collections.<TestAction>singletonList(action);

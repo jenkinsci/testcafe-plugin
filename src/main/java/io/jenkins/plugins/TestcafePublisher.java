@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -45,11 +44,11 @@ public class TestcafePublisher extends TestDataPublisher {
             List<CaseResult> caseResults = suiteResult.getCases();
 
             for (CaseResult caseResult : caseResults) {
-                Map<String, String> attachments = (new AttachmentsParser(caseResult)).parse();
+                List<Attachment> attachments = (new AttachmentsParser(caseResult)).parse();
 
-                for (Map.Entry<String, String> entry : attachments.entrySet()) {
-                    final String attachmentAbsolutePath = entry.getKey();
-                    final String attachmentNewFilename = entry.getValue();
+                for (Attachment attachment : attachments) {
+                    final String attachmentAbsolutePath = attachment.getAbsolutePath();
+                    final String attachmentNewFilename = attachment.getHashValue() + attachment.getExtension();
 
                     // even though we use child(), this should be absolute
                     FilePath from = workspace.child(attachmentAbsolutePath);

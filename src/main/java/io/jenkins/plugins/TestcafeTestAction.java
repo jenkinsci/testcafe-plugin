@@ -1,10 +1,10 @@
 package io.jenkins.plugins;
 
-import hudson.Util;
 import hudson.tasks.junit.TestAction;
 import hudson.tasks.test.TestObject;
-import java.util.Map;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import jenkins.model.Jenkins;
 
 /**
@@ -17,13 +17,23 @@ public class TestcafeTestAction extends TestAction {
 
     private final TestObject testObject;
 
-    private final Map<String, String> testAttachments;
+    private final List<Attachment> testAttachments;
 
-    public Map<String, String> getAttachments() {
-        return testAttachments;
+    public List<Attachment> getScreenshots() {
+        return testAttachments
+                .stream()
+                .filter(attachment -> attachment.getType().equals("screenshot"))
+                .collect(Collectors.toList());
     }
 
-    public TestcafeTestAction(TestObject testObject, Map<String, String> testAttachments) {
+    public List<Attachment> getVideos() {
+        return testAttachments
+                .stream()
+                .filter(attachment -> attachment.getType().equals("video"))
+                .collect(Collectors.toList());
+    }
+
+    public TestcafeTestAction(TestObject testObject, List<Attachment> testAttachments) {
         this.testObject = testObject;
         this.testAttachments = testAttachments;
     }
@@ -43,11 +53,15 @@ public class TestcafeTestAction extends TestAction {
         return "package.gif";
     }
 
-    public String getUrl(String fileName) {
+    public String getUrl(Attachment attachment) {
         return Jenkins.get().getRootUrl()
                 + testObject.getRun().getUrl()
                 + "testcafe-attachments/"
-                + Util.rawEncode(fileName);
+                + attachment.getHashValue() + attachment.getExtension();
+    }
+
+    public String getDisplayUrl(Attachment attachment) {
+        return attachment.getAbsolutePath();
     }
 
     public TestObject getTestObject() {

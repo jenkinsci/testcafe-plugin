@@ -1,28 +1,29 @@
 package io.jenkins.plugins;
 
 import hudson.tasks.junit.CaseResult;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Extract attachments from CaseResult stdOut
  *
- * FORMAT: [[ATTACHMENT|/absolute/path/to/attach/|UUID-OF-ATTACHMENT]]
+ * FORMAT: [[screenshot|/absolute/path/to/screenshot/|UUID-OF-SCREENSHOT]]
+ * [[video|/absolute/path/to/video/|UUID-OF-VIDEO]]
  */
 public class AttachmentsParser {
 
     private final CaseResult caseResult;
 
-    private static final Pattern ATTACHMENT_PATTERN = Pattern.compile("\\[\\[ATTACHMENT\\|(.*)\\|(.*)\\]\\]");
+    private static final Pattern ATTACHMENT_PATTERN = Pattern.compile("\\[\\[(.*)\\|(.*)\\|(.*)\\]\\]");
 
     AttachmentsParser(CaseResult caseResult) {
         this.caseResult = caseResult;
     }
 
-    Map<String, String> parse() {
-        final Map<String, String> attachments = new HashMap<>();
+    List<Attachment> parse() {
+        final List<Attachment> attachments = new ArrayList<>();
 
         if (caseResult.getStdout() == null) {
             return attachments;
@@ -32,11 +33,13 @@ public class AttachmentsParser {
         final Matcher matcher = ATTACHMENT_PATTERN.matcher(stdOut);
 
         while (matcher.find()) {
-            String attachmentAbsolutePath = matcher.group(1);
-            String attachmentHash = matcher.group(2);
-            String extension = attachmentAbsolutePath.substring(attachmentAbsolutePath.lastIndexOf("."));
+            String type = matcher.group(1);
+            String absolutePath = matcher.group(2);
+            String hashValue = matcher.group(3);
 
-            attachments.put(attachmentAbsolutePath, attachmentHash + extension);
+            Attachment attachment = new Attachment(type, absolutePath, hashValue);
+
+            attachments.add(attachment);
         }
 
         return attachments;
