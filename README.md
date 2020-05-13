@@ -8,7 +8,7 @@ This plugin should be used with [Testcafe Jenkins Reporter](https://github.com/w
 ```
 npm i testcafe-reporter-jenkins
 ```
-** Package is not yet published to npm registry, so use **
+**Package is not yet published to npm registry, so use**
 ```
 npm i https://github.com/wentwrong/testcafe-reporter-jenkins/releases/download/v1.0.0/testcafe-reporter-jenkins-1.0.0.tgz
 ```
