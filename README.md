@@ -1,13 +1,10 @@
 # Jenkins Testcafe Plugin
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/wentwrong/testcafe-jenkins-plugin?include_prereleases)
+[![GitHub release](https://img.shields.io/github/v/release/wentwrong/testcafe-jenkins-plugin?include_prereleases)](https://github.com/wentwrong/testcafe-jenkins-plugin/releases)
 
 This plugin integrates <a href="https://devexpress.github.io/testcafe/">Testcafe</a> with Jenkins allowing to view attachments (screenshots and videos) directly on test page.
 
 ## How-to
-This plugin should be used with [Testcafe Jenkins Reporter](https://github.com/wentwrong/testcafe-reporter-jenkins/). To install the reporter use the following command:
-```
-npm i testcafe-reporter-jenkins
-```
+This plugin should be used with [Testcafe Jenkins Reporter](https://github.com/wentwrong/testcafe-reporter-jenkins/).
 **Package is not yet published to npm registry, so use**
 ```
 npm i https://github.com/wentwrong/testcafe-reporter-jenkins/releases/download/v1.0.0/testcafe-reporter-jenkins-1.0.0.tgz
