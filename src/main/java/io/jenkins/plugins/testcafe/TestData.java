@@ -1,4 +1,4 @@
-package io.jenkins.plugins;
+package io.jenkins.plugins.testcafe;
 
 import hudson.tasks.junit.CaseResult;
 import hudson.tasks.junit.SuiteResult;

@@ -1,4 +1,4 @@
-package io.jenkins.plugins;
+package io.jenkins.plugins.testcafe;
 
 import hudson.tasks.junit.TestAction;
 import hudson.tasks.test.TestObject;

@@ -1,4 +1,4 @@
-package io.jenkins.plugins;
+package io.jenkins.plugins.testcafe;
 
 public class Attachment {
 
