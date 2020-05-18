@@ -3,7 +3,10 @@ package io.jenkins.plugins.testcafe;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
+import hudson.tasks.junit.CaseResult;
 import hudson.tasks.junit.JUnitResultArchiver;
+import hudson.tasks.junit.SuiteResult;
+import hudson.tasks.junit.TestResultAction;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,12 +29,14 @@ public class TestcafePublisherFreeStyleJobTest {
 
     private FreeStyleBuild build;
 
-    private final List<String> ATTACHMENTS_HASHES = Arrays.asList(
-            "19bdf35f-e776-4706-83f5-91f807386bcd",
-            "b3b3fcf2-c7bb-416f-a834-28deb7dbdf85"
-    );
+    private final String SCREENSHOT_HASH = "b3b3fcf2-c7bb-416f-a834-28deb7dbdf85";
+    private final String VIDEO_HASH = "19bdf35f-e776-4706-83f5-91f807386bcd";
+    private final List<String> ATTACHMENTS_HASHES = Arrays.asList(SCREENSHOT_HASH, VIDEO_HASH);
+
     private final String WORKSPACE_FILENAME = "workspace.zip";
     private final String ATTACHMENTS_DIRNAME = "testcafe-attachments";
+    private final String SUITE_NAME = "TestCafe Tests_ Chrome 81.0.4044.138 _ Linux 0.0";
+    private final String CASE_NAME = "Submit name";
 
     @Before
     public void runFreestyleProjectBuild() throws IOException, InterruptedException, ExecutionException {
@@ -68,5 +73,39 @@ public class TestcafePublisherFreeStyleJobTest {
         Collections.sort(attachmentBasenames);
 
         assertTrue("Attachments should be named as UUID hashes", ATTACHMENTS_HASHES.equals(attachmentBasenames));
+    }
+
+    @Test
+    public void testThatActionReturnsCorrectAttachments() {
+        TestResultAction testResultAction = build.getAction(TestResultAction.class);
+        assertNotNull(testResultAction);
+
+        SuiteResult suiteResult = testResultAction.getResult().getSuite(SUITE_NAME);
+        assertNotNull(suiteResult);
+
+        CaseResult caseResult = suiteResult.getCase(CASE_NAME);
+        assertNotNull(caseResult);
+
+        TestcafeTestAction caseAction = caseResult.getTestAction(TestcafeTestAction.class);
+        assertNotNull(caseAction);
+
+        List<Attachment> screenshots = caseAction.getScreenshots();
+        assertNotNull(screenshots);
+
+        List<Attachment> videos = caseAction.getVideos();
+        assertNotNull(videos);
+
+        final List<String> screenshotHashes = screenshots
+                .stream()
+                .map(attachment -> attachment.getHashValue())
+                .collect(Collectors.toList());
+
+        final List<String> videoHashes = videos
+                .stream()
+                .map(video -> video.getHashValue())
+                .collect(Collectors.toList());
+
+        assertTrue("Action should return correct screenshot", screenshotHashes.equals(Arrays.asList(SCREENSHOT_HASH)));
+        assertTrue("Action should return correct video", videoHashes.equals(Arrays.asList(VIDEO_HASH)));
     }
 }
