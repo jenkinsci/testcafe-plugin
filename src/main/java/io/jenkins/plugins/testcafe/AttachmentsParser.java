@@ -16,7 +16,7 @@ public class AttachmentsParser {
 
     private final CaseResult caseResult;
 
-    private static final Pattern ATTACHMENT_PATTERN = Pattern.compile("\\[\\[(.*)\\|(.*)\\|(.*)\\]\\]");
+    private static final Pattern ATTACHMENT_PATTERN = Pattern.compile("\\[\\[(screenshot|video)\\|(.*)\\|(.*)\\]\\]");
 
     AttachmentsParser(CaseResult caseResult) {
         this.caseResult = caseResult;

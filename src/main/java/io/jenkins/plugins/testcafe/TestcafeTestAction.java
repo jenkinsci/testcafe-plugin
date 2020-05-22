@@ -61,7 +61,7 @@ public class TestcafeTestAction extends TestAction {
     }
 
     public String getDisplayUrl(Attachment attachment) {
-        return attachment.getAbsolutePath();
+        return attachment.getPath();
     }
 
     public TestObject getTestObject() {

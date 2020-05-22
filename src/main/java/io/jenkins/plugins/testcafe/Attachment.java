@@ -3,12 +3,12 @@ package io.jenkins.plugins.testcafe;
 public class Attachment {
 
     private final String type;
-    private final String absolutePath;
+    private final String path;
     private final String hashValue;
 
-    Attachment(String type, String absolutePath, String hashValue) {
+    Attachment(String type, String path, String hashValue) {
         this.type = type;
-        this.absolutePath = absolutePath;
+        this.path = path;
         this.hashValue = hashValue;
     }
 
@@ -16,8 +16,8 @@ public class Attachment {
         return type;
     }
 
-    String getAbsolutePath() {
-        return absolutePath;
+    String getPath() {
+        return path;
     }
 
     String getHashValue() {

@@ -14,6 +14,7 @@ import hudson.tasks.junit.SuiteResult;
 import java.io.File;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,10 +45,15 @@ public class TestcafePublisher extends TestDataPublisher {
             List<CaseResult> caseResults = suiteResult.getCases();
 
             for (CaseResult caseResult : caseResults) {
+                AttachmentsDirs attachmentsDirs = (new AttachmentsDirsParser(caseResult)).parse();
                 List<Attachment> attachments = (new AttachmentsParser(caseResult)).parse();
 
                 for (Attachment attachment : attachments) {
-                    final String attachmentAbsolutePath = attachment.getAbsolutePath();
+                    final String attachmentAbsolutePath = Paths.get(
+                            attachmentsDirs.getDir(attachment.getType()),
+                            attachment.getPath()
+                    ).toString();
+
                     final String attachmentNewFilename = attachment.getHashValue() + attachment.getExtension();
 
                     // even though we use child(), this should be absolute
