@@ -31,10 +31,18 @@ public class TestcafePublisherFreeStyleJobTest {
 
     private final String SCREENSHOT_HASH = "b3b3fcf2-c7bb-416f-a834-28deb7dbdf85";
     private final String VIDEO_HASH = "19bdf35f-e776-4706-83f5-91f807386bcd";
-    private final List<String> ATTACHMENTS_HASHES = Arrays.asList(SCREENSHOT_HASH, VIDEO_HASH);
+    private final List<String> ATTACHMENTS_HASHES = Arrays.asList(
+            // Hashes of attachments with absolute paths
+            SCREENSHOT_HASH,
+            VIDEO_HASH,
+            // Hashes of attachments with relative to screenshotsDir and videosDir
+            "ab720da1-1f7c-4b6b-a31e-3219741baa38",
+            "f2c130fa-de86-4ac1-9e33-a4e850746976");
 
     private final String WORKSPACE_FILENAME = "workspace.zip";
     private final String ATTACHMENTS_DIRNAME = "testcafe-attachments";
+
+    // Suite with absolute paths
     private final String SUITE_NAME = "TestCafe Tests_ Chrome 81.0.4044.138 _ Linux 0.0";
     private final String CASE_NAME = "Submit name";
 
