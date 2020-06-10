@@ -1,18 +1,32 @@
 package io.jenkins.plugins.testcafe;
 
-public class Attachment {
+import java.util.HashMap;
+import java.util.Map;
 
-    private final String type;
+public class Attachment {
+    enum Type {
+        Screenshot,
+        Video,
+        Unknown
+    };
+    
+    Map<String,Type> mapStringToType = new HashMap<>();
+    {
+        mapStringToType.put("screenshot", Type.Screenshot);
+        mapStringToType.put("video", Type.Video);
+    }
+    
+    private final Type type;
     private final String path;
     private final String hashValue;
 
     Attachment(String type, String path, String hashValue) {
-        this.type = type;
+        this.type = mapStringToType.getOrDefault(type, Type.Unknown);
         this.path = path;
         this.hashValue = hashValue;
     }
 
-    String getType() {
+    Type getType() {
         return type;
     }
 
@@ -26,9 +40,9 @@ public class Attachment {
 
     String getExtension() {
         switch (type) {
-            case "video":
+            case Video:
                 return ".mp4";
-            case "screenshot":
+            case Screenshot:
                 return ".png";
             default:
                 return "";

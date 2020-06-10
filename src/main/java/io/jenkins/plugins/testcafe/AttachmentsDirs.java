@@ -23,11 +23,11 @@ public class AttachmentsDirs {
         }
     }
 
-    String getDir(String attachmentType) {
+    String getDir(Attachment.Type attachmentType) {
         switch (attachmentType) {
-            case "screenshot":
+            case Screenshot:
                 return this.screenshotsDir;
-            case "video":
+            case Video:
                 return this.videosDir;
             default:
                 throw new Error("Incorrect attachment type");

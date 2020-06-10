@@ -23,14 +23,14 @@ public class TestcafeTestAction extends TestAction {
     public List<Attachment> getScreenshots() {
         return testAttachments
                 .stream()
-                .filter(attachment -> attachment.getType().equals("screenshot"))
+                .filter(attachment -> attachment.getType().equals(Attachment.Type.Screenshot))
                 .collect(Collectors.toList());
     }
 
     public List<Attachment> getVideos() {
         return testAttachments
                 .stream()
-                .filter(attachment -> attachment.getType().equals("video"))
+                .filter(attachment -> attachment.getType().equals(Attachment.Type.Video))
                 .collect(Collectors.toList());
     }
 
