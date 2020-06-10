@@ -5,9 +5,8 @@ This plugin integrates <a href="https://devexpress.github.io/testcafe/">Testcafe
 
 ## How-to
 This plugin should be used with [Testcafe Jenkins Reporter](https://github.com/wentwrong/testcafe-reporter-jenkins/).
-**Package is not yet published to npm registry, so use**
 ```
-npm i https://github.com/wentwrong/testcafe-reporter-jenkins/releases/download/v1.0.0/testcafe-reporter-jenkins-1.0.0.tgz
+npm i testcafe-reporter-jenkins
 ```
 ### Usage on freestyle jobs
 Choose "Publish JUnit test result report" at Post-build Actions and "Testcafe Report" as additional test report features

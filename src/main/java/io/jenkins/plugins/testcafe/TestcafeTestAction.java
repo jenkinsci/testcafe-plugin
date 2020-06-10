@@ -14,6 +14,7 @@ import jenkins.model.Jenkins;
 public class TestcafeTestAction extends TestAction {
 
     private static final Logger LOG = Logger.getLogger(TestAction.class.getName());
+    private static final String TESTCAFE_ATTACHMENTS_DIRNAME = "testcafe-attachments/";
 
     private final TestObject testObject;
 
@@ -54,10 +55,13 @@ public class TestcafeTestAction extends TestAction {
     }
 
     public String getUrl(Attachment attachment) {
-        return Jenkins.get().getRootUrl()
-                + testObject.getRun().getUrl()
-                + "testcafe-attachments/"
-                + attachment.getHashValue() + attachment.getExtension();
+        return new StringBuilder()
+                .append(Jenkins.get().getRootUrl())
+                .append(testObject.getRun().getUrl())
+                .append(TESTCAFE_ATTACHMENTS_DIRNAME)
+                .append(attachment.getHashValue())
+                .append(attachment.getExtension())
+                .toString();
     }
 
     public String getDisplayUrl(Attachment attachment) {

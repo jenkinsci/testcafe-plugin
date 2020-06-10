@@ -7,7 +7,9 @@ import hudson.tasks.junit.CaseResult;
 import hudson.tasks.junit.JUnitResultArchiver;
 import hudson.tasks.junit.SuiteResult;
 import hudson.tasks.junit.TestResultAction;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.assertEquals;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,6 +32,9 @@ public class TestcafePublisherFreeStyleJobTest {
     public JenkinsRule jenkinsRule = new JenkinsRule();
 
     private FreeStyleBuild build;
+
+    private final String SCREENSHOT_MD5_HASH = "7f6311d49e814d49bee43da03d6aaa2a";
+    private final String VIDEO_MD5_HASH = "b06f526b7b1501638fa83a65d7c51019";
 
     private final String SCREENSHOT_HASH = "b3b3fcf2-c7bb-416f-a834-28deb7dbdf85";
     private final String VIDEO_HASH = "19bdf35f-e776-4706-83f5-91f807386bcd";
@@ -115,5 +122,69 @@ public class TestcafePublisherFreeStyleJobTest {
 
         assertTrue("Action should return correct screenshot", screenshotHashes.equals(Arrays.asList(SCREENSHOT_HASH)));
         assertTrue("Action should return correct video", videoHashes.equals(Arrays.asList(VIDEO_HASH)));
+    }
+
+    @Test
+    public void testThatActionReturnValidUrlToScreenshot() throws IOException, InterruptedException {
+        TestcafeTestAction caseAction = build
+                .getAction(TestResultAction.class)
+                .getResult()
+                .getSuite(SUITE_NAME)
+                .getCase(CASE_NAME)
+                .getTestAction(TestcafeTestAction.class);
+
+        final List<Attachment> screenshots = caseAction.getScreenshots();
+        assertEquals(1, screenshots.size());
+
+        final String screenshotUrl = caseAction.getUrl(screenshots.get(0));
+
+        InputStream inputStream = jenkinsRule
+                .createWebClient()
+                .getPage(screenshotUrl)
+                .getWebResponse()
+                .getContentAsStream();
+
+        File downloadedScreenshot = new File("downloadedScreenshot.png");
+        FileUtils.copyInputStreamToFile(inputStream, downloadedScreenshot);
+
+        assertNotNull(downloadedScreenshot);
+        assertEquals("Downloaded screenshot should have the same MD5 value",
+                SCREENSHOT_MD5_HASH,
+                (new FilePath(downloadedScreenshot)).digest()
+        );
+
+        assertTrue("Should delete downloaded screenshot", downloadedScreenshot.delete());
+    }
+
+    @Test
+    public void testThatActionReturnValidUrlToVideo() throws IOException, InterruptedException {
+        TestcafeTestAction caseAction = build
+                .getAction(TestResultAction.class)
+                .getResult()
+                .getSuite(SUITE_NAME)
+                .getCase(CASE_NAME)
+                .getTestAction(TestcafeTestAction.class);
+
+        final List<Attachment> videos = caseAction.getVideos();
+        assertEquals(1, videos.size());
+
+        final String screenshotUrl = caseAction.getUrl(videos.get(0));
+
+        InputStream inputStream = jenkinsRule
+                .createWebClient()
+                .getPage(screenshotUrl)
+                .getWebResponse()
+                .getContentAsStream();
+
+        File downloadedVideo = new File("downloadedVideo.mp4");
+        FileUtils.copyInputStreamToFile(inputStream, downloadedVideo);
+
+        assertNotNull(downloadedVideo);
+        assertEquals("Downloaded video should have the same MD5 hash",
+                VIDEO_MD5_HASH,
+                (new FilePath(downloadedVideo)).digest()
+        );
+
+        assertTrue("Should delete downloaded video", downloadedVideo.delete());
     }
 }
