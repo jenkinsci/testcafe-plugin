@@ -1,4 +1,4 @@
-name: Testcafe plugin CI
+name: TestCafe Jenkins plugin CI
 
 on: [push]
 

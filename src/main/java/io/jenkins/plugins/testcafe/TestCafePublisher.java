@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Set;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-public class TestcafePublisher extends TestDataPublisher {
+public class TestCafePublisher extends TestDataPublisher {
 
     @DataBoundConstructor
-    public TestcafePublisher() {
+    public TestCafePublisher() {
     }
 
     @Override
@@ -31,11 +31,11 @@ public class TestcafePublisher extends TestDataPublisher {
             Launcher launcher, TaskListener listener,
             TestResult testResult) throws IOException, InterruptedException {
         FilePath attachmentsStorage = new FilePath(new File(run.getRootDir().getAbsolutePath()))
-                .child("testcafe-attachments");
+                .child(Constants.TESTCAFE_ATTACHMENTS_DIR_NAME);
 
         attachmentsStorage.mkdirs();
 
-        run.addAction(new TestcafeAttachmentsAction(run));
+        run.addAction(new TestCafeAttachmentsAction(run));
 
         final Set<String> suiteIDs = new HashSet<>();
 
@@ -71,13 +71,15 @@ public class TestcafePublisher extends TestDataPublisher {
 
     @Extension
     public static class DescriptorImpl extends Descriptor<TestDataPublisher> {
-
+        
+        private static final String TESTCAFE_PUBLISH_DISPLAY_NAME = "Include links to TestCafe artifacts";
+        
         /*
         * Displayed when user clicked Add button in "Additional test report features"
          */
         @Override
         public String getDisplayName() {
-            return "Testcafe Report";
+            return TESTCAFE_PUBLISH_DISPLAY_NAME;
         }
     }
 }

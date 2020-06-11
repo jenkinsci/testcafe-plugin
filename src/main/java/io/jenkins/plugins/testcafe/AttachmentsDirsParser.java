@@ -31,7 +31,7 @@ public class AttachmentsDirsParser {
             final String attachmentType = matcher.group(1);
             final String baseDir = matcher.group(2);
 
-            attachmentsDirs.setDir(attachmentType, baseDir);
+            attachmentsDirs.setDir(attachmentsDirs.getType(attachmentType), baseDir);
         }
 
         return attachmentsDirs;

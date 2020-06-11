@@ -32,7 +32,7 @@ public class TestData extends TestResultAction.Data {
             }
 
             final List<Attachment> testAttachments = (new AttachmentsParser(caseResult)).parse();
-            TestAction action = new TestcafeTestAction((TestObject) testObject, testAttachments);
+            TestAction action = new TestCafeTestAction((TestObject) testObject, testAttachments);
 
             return Collections.<TestAction>singletonList(action);
         }

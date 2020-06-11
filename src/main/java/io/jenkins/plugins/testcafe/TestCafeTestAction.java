@@ -11,10 +11,11 @@ import jenkins.model.Jenkins;
  * Represents page with information about the test
  *
  */
-public class TestcafeTestAction extends TestAction {
+public class TestCafeTestAction extends TestAction {
 
     private static final Logger LOG = Logger.getLogger(TestAction.class.getName());
     private static final String TESTCAFE_ATTACHMENTS_DIRNAME = "testcafe-attachments/";
+    private static final String TESTCAFE_ACTION_ICON_NAME = "package.gif";
 
     private final TestObject testObject;
 
@@ -34,7 +35,7 @@ public class TestcafeTestAction extends TestAction {
                 .collect(Collectors.toList());
     }
 
-    public TestcafeTestAction(TestObject testObject, List<Attachment> testAttachments) {
+    public TestCafeTestAction(TestObject testObject, List<Attachment> testAttachments) {
         this.testObject = testObject;
         this.testAttachments = testAttachments;
     }
@@ -51,7 +52,7 @@ public class TestcafeTestAction extends TestAction {
 
     @Override
     public String getIconFileName() {
-        return "package.gif";
+        return TESTCAFE_ACTION_ICON_NAME;
     }
 
     public String getUrl(Attachment attachment) {

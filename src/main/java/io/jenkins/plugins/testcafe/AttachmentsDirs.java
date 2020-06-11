@@ -1,7 +1,21 @@
 package io.jenkins.plugins.testcafe;
 
-public class AttachmentsDirs {
+import java.util.HashMap;
+import java.util.Map;
 
+public class AttachmentsDirs {
+    enum Type {
+        ScreenshotsDir,
+        VideosDir,
+        Unknown
+    }
+    
+    Map<String, Type> mapStringToType = new HashMap<>();
+    {
+        mapStringToType.put("screenshotsDir", Type.ScreenshotsDir);
+        mapStringToType.put("videosDir", Type.VideosDir);
+    }
+    
     private String screenshotsDir;
     private String videosDir;
 
@@ -10,12 +24,16 @@ public class AttachmentsDirs {
         this.videosDir = "";
     }
 
-    void setDir(String type, String baseDir) {
+    Type getType(String type) {
+        return mapStringToType.getOrDefault(type, Type.Unknown);
+    }
+    
+    void setDir(Type type, String baseDir) {
         switch (type) {
-            case "screenshotsDir":
+            case ScreenshotsDir:
                 this.screenshotsDir = baseDir;
                 break;
-            case "videosDir":
+            case VideosDir:
                 this.videosDir = baseDir;
                 break;
             default:

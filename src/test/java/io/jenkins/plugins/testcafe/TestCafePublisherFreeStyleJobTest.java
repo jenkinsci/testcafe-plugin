@@ -30,7 +30,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.TouchBuilder;
 import org.xml.sax.SAXException;
 
-public class TestcafePublisherFreeStyleJobTest {
+public class TestCafePublisherFreeStyleJobTest {
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
@@ -51,7 +51,6 @@ public class TestcafePublisherFreeStyleJobTest {
             "f2c130fa-de86-4ac1-9e33-a4e850746976");
 
     private final String WORKSPACE_FILENAME = "workspace.zip";
-    private final String ATTACHMENTS_DIRNAME = "testcafe-attachments";
 
     // Suite with absolute paths
     private final String SUITE_NAME = "TestCafe Tests_ Chrome 81.0.4044.138 _ Linux 0.0";
@@ -67,7 +66,7 @@ public class TestcafePublisherFreeStyleJobTest {
         // publishing through JUnit with Testcafe
         JUnitResultArchiver archiver = new JUnitResultArchiver("*.xml");
         archiver.setKeepLongStdio(true);
-        archiver.setTestDataPublishers(Arrays.asList(new TestcafePublisher()));
+        archiver.setTestDataPublishers(Arrays.asList(new TestCafePublisher()));
 
         project.getPublishersList().add(archiver);
 
@@ -78,9 +77,10 @@ public class TestcafePublisherFreeStyleJobTest {
 
     @Test
     public void testThatAttachmentsCopiedCorrectly() throws IOException, InterruptedException, ExecutionException {
-        final FilePath testcafeAttachments = (new FilePath(build.getRootDir())).child(ATTACHMENTS_DIRNAME);
+        final FilePath testcafeAttachments = (new FilePath(build.getRootDir()))
+                .child(Constants.TESTCAFE_ATTACHMENTS_DIR_NAME);
 
-        assertTrue("Testcafe attachments directory should exists", testcafeAttachments.exists());
+        assertTrue("TestCafe attachments directory should exists", testcafeAttachments.exists());
 
         final List<String> attachmentBasenames = testcafeAttachments
                 .list()
@@ -105,7 +105,7 @@ public class TestcafePublisherFreeStyleJobTest {
         CaseResult caseResult = suiteResult.getCase(CASE_NAME);
         assertNotNull(caseResult);
 
-        TestcafeTestAction caseAction = caseResult.getTestAction(TestcafeTestAction.class);
+        TestCafeTestAction caseAction = caseResult.getTestAction(TestCafeTestAction.class);
         assertNotNull(caseAction);
 
         List<Attachment> screenshots = caseAction.getScreenshots();
@@ -130,12 +130,12 @@ public class TestcafePublisherFreeStyleJobTest {
 
     @Test
     public void testThatActionReturnValidUrlToScreenshot() throws IOException, InterruptedException {
-        TestcafeTestAction caseAction = build
+        TestCafeTestAction caseAction = build
                 .getAction(TestResultAction.class)
                 .getResult()
                 .getSuite(SUITE_NAME)
                 .getCase(CASE_NAME)
-                .getTestAction(TestcafeTestAction.class);
+                .getTestAction(TestCafeTestAction.class);
 
         final List<Attachment> screenshots = caseAction.getScreenshots();
         assertEquals(1, screenshots.size());
@@ -162,12 +162,12 @@ public class TestcafePublisherFreeStyleJobTest {
 
     @Test
     public void testThatActionReturnValidUrlToVideo() throws IOException, InterruptedException {
-        TestcafeTestAction caseAction = build
+        TestCafeTestAction caseAction = build
                 .getAction(TestResultAction.class)
                 .getResult()
                 .getSuite(SUITE_NAME)
                 .getCase(CASE_NAME)
-                .getTestAction(TestcafeTestAction.class);
+                .getTestAction(TestCafeTestAction.class);
 
         final List<Attachment> videos = caseAction.getVideos();
         assertEquals(1, videos.size());
@@ -245,7 +245,7 @@ public class TestcafePublisherFreeStyleJobTest {
 
         final HtmlAnchor linkToScreenshot = (HtmlAnchor) screenshotsTable.getCellAt(1, 0).getFirstChild();
         final HtmlAnchor linkToVideo = (HtmlAnchor) videosTable.getCellAt(1, 0).getFirstChild();
-        final TestcafeTestAction caseAction = caseResult.getTestAction(TestcafeTestAction.class);
+        final TestCafeTestAction caseAction = caseResult.getTestAction(TestCafeTestAction.class);
         final Attachment screenshot = caseAction.getScreenshots().get(0);
         final Attachment video = caseAction.getVideos().get(0);
 

@@ -19,7 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-public class TestcafePublisherPipelineJobTest {
+public class TestCafePublisherPipelineJobTest {
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
@@ -28,7 +28,6 @@ public class TestcafePublisherPipelineJobTest {
 
     private final String WORKSPACE_FILENAME = "workspace.zip";
     private final String PIPELINE_FILENAME = "pipelineTest.groovy";
-    private final String ATTACHMENTS_DIRNAME = "testcafe-attachments";
 
     private final String SCREENSHOT_HASH = "b3b3fcf2-c7bb-416f-a834-28deb7dbdf85";
     private final String VIDEO_HASH = "19bdf35f-e776-4706-83f5-91f807386bcd";
@@ -63,9 +62,10 @@ public class TestcafePublisherPipelineJobTest {
 
     @Test
     public void testThatAttachmentsCopiedCorrectly() throws IOException, InterruptedException, ExecutionException {
-        final FilePath testcafeAttachments = (new FilePath(build.getRootDir())).child(ATTACHMENTS_DIRNAME);
+        final FilePath testcafeAttachments = (new FilePath(build.getRootDir()))
+                .child(Constants.TESTCAFE_ATTACHMENTS_DIR_NAME);
 
-        assertTrue("Testcafe attachments directory should exists", testcafeAttachments.exists());
+        assertTrue("TestCafe attachments directory should exists", testcafeAttachments.exists());
 
         final List<String> attachmentBasenames = testcafeAttachments
                 .list()
