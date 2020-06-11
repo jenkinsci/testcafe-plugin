@@ -1,5 +1,8 @@
 package io.jenkins.plugins.testcafe;
 
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -25,6 +28,7 @@ import org.junit.Test;
 import org.jvnet.hudson.test.ExtractResourceSCM;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.TouchBuilder;
+import org.xml.sax.SAXException;
 
 public class TestcafePublisherFreeStyleJobTest {
 
@@ -186,5 +190,80 @@ public class TestcafePublisherFreeStyleJobTest {
         );
 
         assertTrue("Should delete downloaded video", downloadedVideo.delete());
+    }
+
+    @Test
+    public void testThatTestCasePageCorrectShowAttachments() throws IOException, SAXException {
+        String buildUrl = build.getUrl();
+        CaseResult caseResult = build
+                .getAction(TestResultAction.class)
+                .getResult()
+                .getSuite(SUITE_NAME)
+                .getCase(CASE_NAME);
+
+        final HtmlElement body = jenkinsRule
+                .createWebClient()
+                .goTo(buildUrl + "testReport" + caseResult.getUrl())
+                // this url looks like
+                // /jenkins/job/test0/1/testReport/junit/(root)/Page manipulation/Submit_name/
+                .getBody();
+
+        final List<HtmlElement> attachmentHeadings = body.getByXPath("//*[@id=\"main-panel\"]/table/tbody/tr/td/h3");
+
+        assertEquals("Should contain two table headings (screenshots and videos)",
+                2,
+                attachmentHeadings.size()
+        );
+        assertEquals("Should contain table with correct number of screenshots in heading",
+                "Screenshots (1)",
+                attachmentHeadings.get(0).getTextContent()
+        );
+        assertEquals("Should contain table with correct number of videos in heading",
+                "Videos (1)",
+                attachmentHeadings.get(1).getTextContent()
+        );
+
+        final HtmlTable screenshotsTable = (HtmlTable) attachmentHeadings.get(0).getNextSibling();
+        final HtmlTable videosTable = (HtmlTable) attachmentHeadings.get(1).getNextSibling();
+
+        assertEquals("Should contain screenshots table with correct number of rows",
+                2,
+                screenshotsTable.getRowCount()
+        );
+        assertEquals("Should contain videos table with correct number of rows",
+                2,
+                videosTable.getRowCount()
+        );
+        assertEquals("Should contain screenshots table with correct first row",
+                "Files",
+                screenshotsTable.getRow(0).getTextContent()
+        );
+        assertEquals("Should contain videos table with correct first row",
+                "Files",
+                videosTable.getRow(0).getTextContent()
+        );
+
+        final HtmlAnchor linkToScreenshot = (HtmlAnchor) screenshotsTable.getCellAt(1, 0).getFirstChild();
+        final HtmlAnchor linkToVideo = (HtmlAnchor) videosTable.getCellAt(1, 0).getFirstChild();
+        final TestcafeTestAction caseAction = caseResult.getTestAction(TestcafeTestAction.class);
+        final Attachment screenshot = caseAction.getScreenshots().get(0);
+        final Attachment video = caseAction.getVideos().get(0);
+
+        assertEquals("Should contain screenshots table with correct link href",
+                caseAction.getUrl(screenshot),
+                linkToScreenshot.getHrefAttribute()
+        );
+        assertEquals("Should contain videos table with correct link href",
+                caseAction.getUrl(video),
+                linkToVideo.getHrefAttribute()
+        );
+        assertEquals("Should contain screenshots table with correct link text",
+                screenshot.getPath(),
+                linkToScreenshot.getTextContent()
+        );
+        assertEquals("Should contain videos table with correct link text",
+                video.getPath(),
+                linkToVideo.getTextContent()
+        );
     }
 }
