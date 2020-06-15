@@ -1,0 +1,40 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<tr><td>
+<j:choose>
+    <j:when test="${!it.getScreenshots().isEmpty()}">
+        <h3>Screenshots (${it.getScreenshots().size()})</h3>
+        <table class="pane sortable">
+            <tr>
+                <td class="pane-header">${%Files}</td>
+            </tr>
+                <j:forEach var="screenshot" items="${it.getScreenshots()}">
+                    <tr>
+                        <td class="pane">
+                            <a href="${it.getUrl(screenshot)}">${it.getDisplayUrl(screenshot)}</a>
+                        </td>
+                    </tr>
+                </j:forEach>
+        </table>
+    </j:when>
+</j:choose>
+<j:choose>
+    <j:when test="${!it.getVideos().isEmpty()}">
+        <h3>Videos (${it.getVideos().size()})</h3>
+        <table class="pane sortable">
+            <tr>
+                <td class="pane-header">${%Files}</td>
+            </tr>
+                <j:forEach var="video" items="${it.getVideos()}">
+                    <tr>
+                        <td class="pane">
+                            <a href="${it.getUrl(video)}">${it.getDisplayUrl(video)}</a>
+                        </td>
+                    </tr>
+                </j:forEach>
+        </table>
+    </j:when>
+</j:choose>
+</td></tr>
+</j:jelly>
