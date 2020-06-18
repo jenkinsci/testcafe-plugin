@@ -1,39 +1,65 @@
 # Jenkins TestСafe Plugin
+
 [![GitHub release](https://img.shields.io/github/v/release/wentwrong/testcafe-jenkins-plugin?include_prereleases)](https://github.com/wentwrong/testcafe-jenkins-plugin/releases)
 
-This plugin integrates <a href="https://devexpress.github.io/testcafe/">TestСafe</a> with Jenkins allowing to view attachments (screenshots and videos) directly on test page.
+This plugin attaches TestCafe artifacts (screenshots and videos) to the Jenkins test results page.
 
-## How-to
-This plugin should be used with [TestCafe Jenkins Reporter](https://github.com/wentwrong/testcafe-reporter-jenkins/).
-```
+![Jenkins TestCafe Plugin](media/jenkins-result.png)
+
+## Usage
+
+> See the following topic for information on how to configure Jenkins to run TestCafe:  [Integrate TestCafe with Jenkins](https://devexpress.github.io/testcafe/documentation/guides/continuous-integration/jenkins.html).
+
+This plugin requires that you install and use the [TestCafe Jenkins reporter](https://www.npmjs.com/package/testcafe-reporter-jenkins):
+
+```sh
 npm i testcafe-reporter-jenkins
 ```
-### Usage on Freestyle Jobs
-Choose "Publish JUnit test result report" at Post-build Actions and "Include links to TestCafe artifacts" as additional test report features
 
-![freestyleJob](https://user-images.githubusercontent.com/26363017/84377718-be80d580-abeb-11ea-9fcf-059aa84b846d.png)
+You can add `testcafe-reporter-jenkins` during the step that installs TestCafe:
 
+![Install the TestCafe Jenkins reporter](media/jenkins-install-reporter.png)
 
-### Usage on Pipeline
-1. Run testcafe with TestСafe Jenkins Reporter specified
-```
+In the command that runs TestCafe, use the [-r flag](https://devexpress.github.io/testcafe/documentation/reference/command-line-interface.html#-r-nameoutput---reporter-nameoutput) to specify the Jenkins reporter and the report file name:
+
+```sh
 testcafe chrome e2e/**/* -r jenkins:report.xml
 ```
 
-2. Collect generated report via junit
+### Use in Freestyle Jobs
+
+Add the **Publish JUnit test result report** post-build action. In **Additional test report features**, click **Add** and select **Include links to TestCafe artifacts**:
+
+![Use TestCafe in a Freestyle Job](media/jenkins-configure-plugin.png)
+
+Ensure that **Retain long standard output/error** is enabled so that Jenkins does not truncate the screenshot and video data.
+
+### Use in Pipelines
+
+In the [Jenkinsfile](https://www.jenkins.io/doc/book/pipeline/jenkinsfile/), add a [post-build step](https://www.jenkins.io/doc/book/pipeline/syntax/#post) that publishes the JUnit report:
+
 ```
-junit keepLongStdio: true, testDataPublishers: [[$class: 'TestCafePublisher']], testResults: 'report.xml'
+post {
+    always {
+        junit keepLongStdio: true,
+              testDataPublishers: [[$class: 'TestCafePublisher']],
+              testResults: 'report.xml'
+    }
+}
 ```
 
-**Notice that keepLongStdio param should be set to true, otherwise test system-out will be truncated by junit**
+> Notice that the `keepLongStdio` parameter must be set to `true`, otherwise the JUnit truncates the test output.
 
-You may look at [example](https://github.com/wentwrong/experiments-with-jenkins) of running tests in parallel distributed among multiple agents.
+To see an example of how to run tests distributed among multiple agents in parallel, refer to the following GitHub repository: [Experiments with Jenkins](https://github.com/wentwrong/experiments-with-jenkins).
 
-## Known issues
-> **When trying to watch a video, the player is either blank or won't play. How do I fix this?**
+## Troubleshooting
 
-Most likely the problem is caused by Content Security Policy in Jenkins. You can check browser console to see what policies exactly were violated. The most common solution is
-**Manage Jenkins**→**Script Console** →
+**The video player is blank or the video does not start**
+
+This issue can occur due to the [Content Security Policy](https://wiki.jenkins.io/display/JENKINS/Configuring+Content+Security+Policy) (CSP) in Jenkins. Check the browser console to see which policies are violated.
+
+The most frequent reason is that media is not allowed to load in CSP. To resolve this issue, set the [media-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/media-src) directive in the CSP header to `self`. Click **Manage Jenkins**, open the **Script Console**, and add the following line:
+
 ```java
 System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "media-src 'self';")
 ```
