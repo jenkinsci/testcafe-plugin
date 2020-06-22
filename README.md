@@ -1,7 +1,5 @@
 # Jenkins TestСafe Plugin
 
-[![GitHub release](https://img.shields.io/github/v/release/wentwrong/testcafe-jenkins-plugin?include_prereleases)](https://github.com/wentwrong/testcafe-jenkins-plugin/releases)
-
 This plugin attaches TestCafe artifacts (screenshots and videos) to the Jenkins test results page.
 
 ![Jenkins TestCafe Plugin](media/jenkins-result.png)
