@@ -1,4 +1,4 @@
 #!/usr/bin/env groovy
 
 /* `buildPlugin` step provided by: https://github.com/jenkins-infra/pipeline-library */
-buildPlugin(useAci: true, configurations: buildPlugin.recommendedConfigurations())
+buildPlugin(useContainerAgent: true, configurations: buildPlugin.recommendedConfigurations())
